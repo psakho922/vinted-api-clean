@@ -1,8 +1,9 @@
+
 import { Body, Controller, Post } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-const bcrypt = requiere('bcrypt');
 
 const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,9 @@ export class AuthController {
       },
     });
 
-    return { message: 'User created', user };
+    return {
+      message: 'User created',
+      user,
+    };
   }
 }
