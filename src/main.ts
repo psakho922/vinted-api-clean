@@ -1,17 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 🔥 Active CORS pour permettre au frontend d'appeler le backend
+  // 🔥 Active le parsing JSON
+  app.use(express.json());
+
+  // 🔥 Active CORS
   app.enableCors({
-    origin: '*', // autorise toutes les origines (ok pour dev)
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
-  // ⚠️ Important pour Render (utilise le PORT fourni par l'environnement)
+  // 🔥 Utilise le port fourni par Render
   await app.listen(process.env.PORT || 3000);
 
   console.log(`🚀 Backend running on port ${process.env.PORT || 3000}`);
