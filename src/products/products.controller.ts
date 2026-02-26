@@ -8,16 +8,21 @@ export class ProductsController {
 
   @Post()
   async create(@Body() body: any) {
-    const product = await prisma.product.create({
-      data: {
-        title: body.title,
-        price: body.price,
-        image: body.image,
-        userId: body.userId,
-      },
-    });
+    try {
+      const product = await prisma.product.create({
+        data: {
+          title: body.title,
+          price: parseFloat(body.price),
+          image: body.image,
+          userId: body.userId,
+        },
+      });
 
-    return product;
+      return product;
+    } catch (error) {
+      console.error(error);
+      return { error: "Erreur création produit" };
+    }
   }
 
   @Get()
@@ -29,3 +34,5 @@ export class ProductsController {
     });
   }
 }
+
+
