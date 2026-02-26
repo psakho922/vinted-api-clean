@@ -4,12 +4,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ CORS correct pour frontend Render
   app.enableCors({
-    origin: 'https://vinted-web.onrender.com',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept',
-    credentials: false,
+    origin: true, // 🔥 accepte toutes les origines dynamiquement
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   await app.listen(process.env.PORT || 3000);
