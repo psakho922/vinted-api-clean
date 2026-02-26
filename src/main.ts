@@ -5,13 +5,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: true, // autorise automatiquement l’origine du frontend
-    credentials: true,
+    origin: [
+      'https://vinted-web.onrender.com',
+      'http://localhost:3000'
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   await app.listen(process.env.PORT || 3000);
 }
 
-bootstrap();
+bootstrap(); 
