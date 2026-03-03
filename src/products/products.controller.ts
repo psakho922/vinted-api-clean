@@ -25,6 +25,14 @@ export class ProductsController {
     });
   }
 
+  // 🔹 GET ONE PRODUCT
+  @Get(':id')
+  async getOne(@Param('id') id: string) {
+    return prisma.product.findUnique({
+      where: { id }
+    });
+  }
+
   // 🔹 CREATE PRODUCT (protégé par JWT)
   @UseGuards(JwtGuard)
   @Post()
@@ -42,7 +50,7 @@ export class ProductsController {
     });
   }
 
-  // 🔹 DELETE PRODUCT (seulement le propriétaire)
+  // 🔹 DELETE PRODUCT (seulement propriétaire)
   @UseGuards(JwtGuard)
   @Delete(':id')
   async deleteProduct(@Param('id') id: string, @Req() req: any) {
