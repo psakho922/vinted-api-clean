@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+ import { Body, Controller, Post } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -13,7 +13,7 @@ export class ProductsController {
       data: {
         title: body.title,
         price: Number(body.price),
-        imageUrl: body.imageUrl,
+        image: body.image,
         user: {
           connect: {
             id: body.userId,
