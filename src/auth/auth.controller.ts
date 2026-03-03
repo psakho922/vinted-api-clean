@@ -1,13 +1,12 @@
 import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
 @Controller('auth')
 export class AuthController {
-  constructor(private jwtService: JwtService) {}
 
   @Post('register')
   async register(@Body() body: any) {
@@ -21,7 +20,10 @@ export class AuthController {
       },
     });
 
-    return { message: 'User created', user };
+    return {
+      message: 'User created',
+      user,
+    };
   }
 
   @Post('login')
@@ -31,22 +33,23 @@ export class AuthController {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Email incorrect');
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      body.password,
-      user.password,
+    const validPassword = await bcrypt.compare(body.password, user.password);
+
+    if (!validPassword) {
+      throw new UnauthorizedException('Mot de passe incorrect');
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '24h' }
     );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const token = this.jwtService.sign({
-      userId: user.id,
-      email: user.email,
-    });
 
     return {
       message: 'Login successful',
@@ -54,4 +57,3 @@ export class AuthController {
     };
   }
 }
-
