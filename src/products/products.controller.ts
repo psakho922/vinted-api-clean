@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 
 const prisma = new PrismaClient();
 
@@ -11,8 +12,12 @@ export class ProductsController {
     return prisma.product.findMany();
   }
 
+  @UseGuards(JwtGuard)
   @Post()
-  async createProduct(@Body() body: any) {
+  async createProduct(@Body() body: any, @Req() req: any) {
+
+    const userId = req.user.userId;
+
     const product = await prisma.product.create({
       data: {
         title: body.title,
@@ -20,7 +25,7 @@ export class ProductsController {
         image: body.image,
         user: {
           connect: {
-            id: body.userId,
+            id: userId,
           },
         },
       },
