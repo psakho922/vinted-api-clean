@@ -8,23 +8,20 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String
-  name      String?
-  createdAt DateTime  @default(now())
-  products  Product[]
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  name     String
+  products Product[]
 }
 
 model Product {
   id        String   @id @default(uuid())
   title     String
-  price     Float
+  price     Int
   image     String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
-
-
-
