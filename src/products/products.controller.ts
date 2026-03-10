@@ -7,72 +7,81 @@ import {
   Param,
   UseGuards,
   Req
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { PrismaClient } from '@prisma/client';
-import { JwtGuard } from '../auth/jwt.guard';
+import { PrismaClient } from "@prisma/client";
+import { JwtGuard } from "../auth/jwt.guard";
 
 const prisma = new PrismaClient();
 
-@Controller('products')
+@Controller("products")
 export class ProductsController {
 
-  // 🔹 GET ALL PRODUCTS
   @Get()
-  async getAll() {
+  async getAll(){
+
     return prisma.product.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy:{
+        createdAt:"desc"
+      }
     });
+
   }
 
-  // 🔹 GET ONE PRODUCT
-  @Get(':id')
-  async getOne(@Param('id') id: string) {
+  @Get(":id")
+  async getOne(@Param("id") id:string){
+
     return prisma.product.findUnique({
-      where: { id }
+      where:{ id }
     });
+
   }
 
-  // 🔹 CREATE PRODUCT (protégé par JWT)
   @UseGuards(JwtGuard)
   @Post()
-  async create(@Body() body: any, @Req() req: any) {
+  async create(@Body() body:any, @Req() req:any){
 
     const userId = req.user.userId;
 
+    if(!body.image){
+
+      throw new Error("Image obligatoire");
+
+    }
+
     return prisma.product.create({
-      data: {
+      data:{
         title: body.title,
         price: Number(body.price),
         image: body.image,
-        userId: userId,
-      },
+        userId
+      }
     });
+
   }
 
-  // 🔹 DELETE PRODUCT (seulement propriétaire)
   @UseGuards(JwtGuard)
-  @Delete(':id')
-  async deleteProduct(@Param('id') id: string, @Req() req: any) {
+  @Delete(":id")
+  async delete(@Param("id") id:string,@Req() req:any){
 
     const userId = req.user.userId;
 
     const product = await prisma.product.findUnique({
-      where: { id }
+      where:{ id }
     });
 
-    if (!product) {
-      return { message: 'Produit introuvable' };
-    }
+    if(product?.userId !== userId){
 
-    if (product.userId !== userId) {
-      return { message: 'Non autorisé' };
+      return { message:"Non autorisé" };
+
     }
 
     await prisma.product.delete({
-      where: { id }
+      where:{ id }
     });
 
-    return { message: 'Produit supprimé' };
+    return { message:"Produit supprimé" };
+
   }
+
 }
