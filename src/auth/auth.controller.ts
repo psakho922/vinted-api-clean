@@ -1,59 +1,67 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import { Body, Controller, Post } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
 
-  @Post('register')
+  constructor(private jwt: JwtService) {}
+
+  @Post("register")
   async register(@Body() body: any) {
-    const hashedPassword = await bcrypt.hash(body.password, 10);
+
+    const hashed = await bcrypt.hash(body.password,10);
 
     const user = await prisma.user.create({
-      data: {
+      data:{
         email: body.email,
-        password: hashedPassword,
-        name: body.name,
-      },
+        password: hashed,
+        name: body.name
+      }
     });
 
     return {
-      message: 'User created',
-      user,
+      message:"User created",
+      user
     };
+
   }
 
-  @Post('login')
+  @Post("login")
   async login(@Body() body: any) {
+
     const user = await prisma.user.findUnique({
-      where: { email: body.email },
+      where:{
+        email: body.email
+      }
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Email incorrect');
+    if(!user){
+
+      return { message:"User not found" };
+
     }
 
-    const validPassword = await bcrypt.compare(body.password, user.password);
+    const valid = await bcrypt.compare(body.password,user.password);
 
-    if (!validPassword) {
-      throw new UnauthorizedException('Mot de passe incorrect');
+    if(!valid){
+
+      return { message:"Password incorrect" };
+
     }
 
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-      },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '24h' }
-    );
+    const token = this.jwt.sign({
+      userId: user.id,
+      email: user.email
+    });
 
     return {
-      message: 'Login successful',
-      access_token: token,
+      access_token: token
     };
+
   }
+
 }
