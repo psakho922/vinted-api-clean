@@ -23,6 +23,15 @@ model Product {
   createdAt DateTime @default(now())
 }
 
+model Message {
+  id        String   @id @default(uuid())
+  text      String
+  senderId  String
+  receiverId String
+  productId String
+  createdAt DateTime @default(now())
+}
+
 model Order {
   id        String   @id @default(uuid())
   productId String
