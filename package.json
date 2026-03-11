@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node dist/main.js",
-    "start:dev": "nest start --watch"
+    "start": "node dist/main.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -13,6 +12,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/websockets": "^10.0.0",
     "@nestjs/platform-socket.io": "^10.0.0",
+    "@nestjs/jwt": "^10.2.0",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
@@ -22,8 +22,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
     "prisma": "^5.22.0",
     "typescript": "^5.0.0"
   }
 }
-.
