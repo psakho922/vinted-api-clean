@@ -1,20 +1,24 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import * as bodyParser from 'body-parser'
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule);
 
-  app.use(bodyParser.json({ limit: '50mb' }))
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+  app.enableCors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true
+  });
 
-  app.enableCors()
+  app.use(bodyParser.json({ limit: "20mb" }));
+  app.use(bodyParser.urlencoded({ limit: "20mb", extended: true }));
 
-  await app.listen(3001)
+  await app.listen(3001);
 
-  console.log("Backend running")
+  console.log("Backend running");
 
 }
 
-bootstrap()
+bootstrap();
