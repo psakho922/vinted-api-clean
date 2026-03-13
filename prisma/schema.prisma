@@ -33,9 +33,10 @@ model Message {
 }
 
 model Order {
-  id        String   @id @default(uuid())
-  productId String
-  buyerId   String
-  status    String   @default("confirmée")
-  createdAt DateTime @default(now())
+id           String   @id @default(uuid())
+  productId    String
+  price        Int
+  commission   Float
+  sellerAmount Float
+  createdAt    DateTime @default(now())
 }
