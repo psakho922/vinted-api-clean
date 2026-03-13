@@ -1,10 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 @Controller('orders')
 export class OrdersController {
+
+  @Get()
+  async getOrders() {
+    return prisma.order.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 
   @Post()
   async createOrder(@Body() body: any) {
@@ -20,7 +27,6 @@ export class OrdersController {
     const price = product.price;
 
     const commission = price * 0.10;
-
     const sellerAmount = price - commission;
 
     const order = await prisma.order.create({
