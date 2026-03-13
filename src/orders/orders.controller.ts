@@ -1,4 +1,3 @@
-
 import { Controller, Post, Body } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
@@ -33,4 +32,11 @@ export class OrdersController {
       }
     });
 
-    return { order };
+    return {
+      message: "Commande créée",
+      order
+    };
+
+  }
+
+}
